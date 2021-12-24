@@ -21,14 +21,13 @@ function Jugar() {
         puntos: 0,
         nivel: 1
     });
-    // Mostrar las respuestas en forma aleatoria
-
 
     const [modal, setModal] = useState({
         mostrar: false,
         titulo: ""
     });
 
+    // Al iniciar se determina si hay un jugador, de lo contrario se piden los datos
     useEffect(() => {
         if (jugador.nombre === "") {
             setShowLoading(true);
@@ -46,7 +45,7 @@ function Jugar() {
         }
     };
 
-
+    // Al introducir texto en el input
     const onInputChange = (e) => {
         const [name, value] = [e.target.name, e.target.value];
         setJugador({
@@ -55,17 +54,15 @@ function Jugar() {
         });
     };
 
-    // onRadioChange
+    // Al cambiar la seleccion del radio button
     const onRadioChange = (e) => {
         setSelectedOption(e.target.id);
         console.log(e.target.value);
         setRadioButton(e.target.value);
 
-        console.log(jugador);
-
     };
 
-    // Se cierra el modal y queda en el jugador nuevo
+    // Se cierra el modal y queda el jugador nuevo
     const guardar = (e) => {
         e.preventDefault();
         setShowLoading(false);
@@ -73,9 +70,10 @@ function Jugar() {
             mostrar: false,
             titulo: ""
         });
-        console.log(jugador);
+        // console.log(jugador);
     };
 
+    // Al cancelar el modal
     const onCancelarModal = () => {
         const paramNuevos = { ...modal };
         paramNuevos.mostrar = false;
@@ -84,7 +82,7 @@ function Jugar() {
     };
 
 
-    // Al enviar la respuesta
+    // Al enviar la respuesta compruena si es correcta 
     const enviarRespuesta = async (e) => {
         e.preventDefault();
 
@@ -102,7 +100,6 @@ function Jugar() {
                 nivel: nivel
             });
 
-
         } else {
             alert("Respuesta incorrecta");
             handleGuardar();
@@ -111,7 +108,7 @@ function Jugar() {
 
     };
 
-    // Se obtiene una pregunta segun el nivel
+    // Se obtiene una pregunta segun el nivel en el que se encuentra el jugador
     useEffect(() => {
         const obtenerPregunta = async () => {
             await axios.get(`${config.HOST}/pregunta/nivel/${nivel}`)
@@ -120,8 +117,10 @@ function Jugar() {
                     if (res.data.pregunta) {
 
                         setPuntosPregunta(puntosPregunta * nivel + 10);
-                        console.log(res);
+                        // console.log(res);
                         setPreguntas(res.data.pregunta);
+
+                        // Se obtienen las respuestas de la pregunta
                         const respuestasObtenidas = [
                             res.data.pregunta.respuesta1,
                             res.data.pregunta.respuesta2,
@@ -129,6 +128,7 @@ function Jugar() {
                             res.data.pregunta.respuestaCorrecta
                         ];
 
+                        // Se crea un array con las respuestas aleatorias
                         const respuestasAleatorias = respuestasObtenidas.sort(() => Math.random() - 0.5);
 
                         setRespuestas(respuestasAleatorias);
@@ -186,17 +186,13 @@ function Jugar() {
             puntos: puntos,
             nivel: nivel - 1
         }
-        console.log(data);
-
-
-        console.log(jugador);
         setPuntos(0);
         setNivel(1);
         setPreguntas([]);
 
         await axios.post(`${config.HOST}/jugador/new`, data)
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 window.location.href = "/";
             })
             .catch(err => {
@@ -304,11 +300,11 @@ function Jugar() {
                     <form onSubmit={guardar} >
                         <div className="form-group">
                             <label htmlFor="nombre">Nombre</label>
-                            <input type="text" className="form-control" id="nombre" placeholder="Nombre" name="nombre" onChange={onInputChange} />
+                            <input type="text" className="form-control" id="nombre" placeholder="Nombre" name="nombre" onChange={onInputChange} required />
                         </div>
                         <div className="form-group">
                             <label htmlFor="apellido">Apellido</label>
-                            <input type="text" className="form-control" id="apellido" placeholder="Apellido" name="apellido" onChange={onInputChange} />
+                            <input type="text" className="form-control" id="apellido" placeholder="Apellido" name="apellido" onChange={onInputChange} required />
                         </div>
 
                         <div className="row text-center">

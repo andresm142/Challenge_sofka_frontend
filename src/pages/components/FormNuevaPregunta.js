@@ -14,7 +14,8 @@ function FormNuevaPregunta(props) {
         respuestaCorrecta: ""
 
     });
-
+    
+    // Al cambiar el valor de un input
     const onInputChange = (e) => {
         const [name, value] = [e.target.name, e.target.value];
         setPregunta({
@@ -23,7 +24,7 @@ function FormNuevaPregunta(props) {
         });
         
     }
-
+    // Al seleccionar una categoria
     const handleCategoria = (categoria) => {
         console.log(categoria);
         setPregunta({
@@ -32,6 +33,7 @@ function FormNuevaPregunta(props) {
         });
     }
 
+    // Al darle click al boton guardar
     const onSubmit = (e) => {
         e.preventDefault();
         props.handlePregunta(pregunta);
@@ -69,7 +71,7 @@ function FormNuevaPregunta(props) {
                 </div>
                 <div className="form-group">
                     <label>Respuesta incorrecta 3</label>
-                    <input type="text" className="form-control" name="respuesta3" onChange={onInputChange} />
+                    <input type="text" className="form-control" name="respuesta3" onChange={onInputChange} required />
                 </div>
                 <button type="submit" className="btn btn-primary btn-block mt-4">
                     Guardar

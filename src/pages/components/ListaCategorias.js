@@ -8,6 +8,7 @@ export default function ListaCategoria(props) {
 
     const [listaCategorias, setListaCategorias] = useState([]);
     
+    // Obtener la lista de categorias
     useEffect(() => {
         async function getListaCategorias() {
 

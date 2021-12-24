@@ -5,6 +5,7 @@ import axios from "axios";
 function Resultados() {
     const [jugador, setJugador] = useState([]);
 
+    // Se obtienen los datos historicos
     useEffect(() => {
         async function getJugador() {
             await axios.get(`${config.HOST}/jugador`)
@@ -36,7 +37,7 @@ function Resultados() {
                     </div>
                 </div>
             </div>
-            
+
             <div className="container mt-4 shadow p-3 mb-5 bg-body rounded">
                 <div className="row">
                     <div className="row text-center">
@@ -52,13 +53,13 @@ function Resultados() {
                                     <th scope="col">Nombre</th>
                                     <th scope="col">Apellido</th>
                                     <th scope="col">Puntaje</th>
-                                    <th scope="col">Nivel</th>
+                                    <th scope="col">Nivel al finalizar el juego</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {jugador.map((jugador,index) => (
+                                {jugador.map((jugador, index) => (
                                     <tr key={jugador._id}>
-                                        <th scope="row">{index+1}</th>
+                                        <th scope="row">{index + 1}</th>
                                         <td>{jugador.nombre}</td>
                                         <td>{jugador.apellido}</td>
                                         <td>{jugador.puntos}</td>

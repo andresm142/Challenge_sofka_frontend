@@ -9,6 +9,7 @@ function FormNuevaCategoria(props) {
         nivel: 1
     });
 
+    // Al cambiar el valor de un input
     const onInputChange = (e) => {
         const [name, value] = [e.target.name, e.target.value];
         setCategoria({
@@ -18,6 +19,7 @@ function FormNuevaCategoria(props) {
         
     }
 
+    // Al darle click al boton guardar
     const onSubmit = (e) => {
         e.preventDefault();
         props.handleCategoria(categoria);

@@ -22,7 +22,7 @@ function ListaPreguntas(props) {
                 <div className="row">
                     <div className="col-1 circulo text-center">
 
-                        A
+                        A)
 
                     </div>
                     <div className="col-8 descripcion">
@@ -32,7 +32,7 @@ function ListaPreguntas(props) {
                 <div className="row">
                     <div className="col-1 circulo text-center">
 
-                        B
+                        B)
 
                     </div>
                     <div className="col-8 descripcion">
@@ -42,7 +42,7 @@ function ListaPreguntas(props) {
                 <div className="row">
                     <div className="col-1 circulo text-center">
 
-                        C
+                        C)
 
                     </div>
                     <div className="col-8 descripcion">
@@ -52,7 +52,7 @@ function ListaPreguntas(props) {
                 <div className="row">
                     <div className="col-1 circulo text-center">
 
-                        D
+                        D)
 
                     </div>
                     <div className="col-8 descripcion">

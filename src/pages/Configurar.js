@@ -35,12 +35,7 @@ function Configuracion() {
             titulo: "Nueva categoria",
             mostrar: true,
             modo: "categoria",
-            onGuardar: () => {
-                console.log("Guardar");
-            },
-            onCancelar: () => {
-                console.log("Cancelar");
-            }
+
         });
     };
 
@@ -50,12 +45,7 @@ function Configuracion() {
             titulo: "Nueva pregunta",
             mostrar: true,
             modo: "pregunta",
-            onGuardar: () => {
-                console.log("Guardar");
-            },
-            onCancelar: () => {
-                console.log("Cancelar");
-            }
+
         });
     };
 
@@ -167,6 +157,7 @@ function Configuracion() {
         getListaPreguntas();
     }, [categoriaSelect]);
 
+    // Crear el listado de preguntas de la categoria seleccionada
     const listaPreguntas = preguntas.map((pregunta) => (
         <ListaPreguntas
             key={pregunta._id}
