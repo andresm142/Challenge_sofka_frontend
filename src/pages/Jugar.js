@@ -6,12 +6,14 @@ import { Spinner } from "react-bootstrap";
 
 function Jugar() {
 
+    const [selectedOption, setSelectedOption] = useState("");
     const [showLoading, setShowLoading] = useState(true);
     const [preguntas, setPreguntas] = useState([]);
     const [respuestas, setRespuestas] = useState([]);
     const [puntos, setPuntos] = useState(0);
     const [puntosPregunta, setPuntosPregunta] = useState(0);
     const [nivel, setNivel] = useState(1);
+
     const [radioButton, setRadioButton] = useState(0);
     const [jugador, setJugador] = useState({
         nombre: "",
@@ -44,32 +46,6 @@ function Jugar() {
         }
     };
 
-    // Guardar datos del jugador
-    const handleGuardar = async () => {
-        setJugador({
-            ...jugador,
-            puntos: puntos,
-            nivel: nivel
-        });
-        setPuntos(0);
-        setNivel(1);
-        setPreguntas([]);
-
-        await axios.post(`${config.HOST}/jugador/new`, jugador)
-            .then(res => {
-                console.log(res);
-                window.location.href = "/";
-            })
-            .catch(err => {
-                if (err.response) {
-                    alert(err.response.data.message);
-                } else {
-                    alert("Error, contacte con el administrador");
-                }
-                console.log(err);
-            });
-    };
-
 
     const onInputChange = (e) => {
         const [name, value] = [e.target.name, e.target.value];
@@ -81,8 +57,12 @@ function Jugar() {
 
     // onRadioChange
     const onRadioChange = (e) => {
+        setSelectedOption(e.target.id);
         console.log(e.target.value);
         setRadioButton(e.target.value);
+
+        console.log(jugador);
+
     };
 
     // Se cierra el modal y queda en el jugador nuevo
@@ -103,25 +83,32 @@ function Jugar() {
         window.location.href = "/";
     };
 
-    // Obtener el valor del radio button seleccionado
-
 
     // Al enviar la respuesta
     const enviarRespuesta = async (e) => {
         e.preventDefault();
 
+        setSelectedOption("");
         const respuesta = radioButton;
-        
+
         if (respuesta === preguntas.respuestaCorrecta) {
             setPuntos(puntos + puntosPregunta);
-            setNivel(nivel + 1);
-        
+            if (nivel < 6) {
+                setNivel(nivel + 1);
+            }
+            setJugador({
+                ...jugador,
+                puntos: puntos,
+                nivel: nivel
+            });
+
 
         } else {
             alert("Respuesta incorrecta");
             handleGuardar();
 
         }
+
     };
 
     // Se obtiene una pregunta segun el nivel
@@ -129,20 +116,37 @@ function Jugar() {
         const obtenerPregunta = async () => {
             await axios.get(`${config.HOST}/pregunta/nivel/${nivel}`)
                 .then(res => {
-                    setPuntosPregunta(puntos*nivel+10);
-                    console.log(res);
-                    setPreguntas(res.data.pregunta);
-                    const respuestasObtenidas = [
-                        res.data.pregunta.respuesta1,
-                        res.data.pregunta.respuesta2,
-                        res.data.pregunta.respuesta3,
-                        res.data.pregunta.respuestaCorrecta
-                    ];
+                    console.log(res.data.pregunta);
+                    if (res.data.pregunta) {
 
-                    const respuestasAleatorias = respuestasObtenidas.sort(() => Math.random() - 0.5);
+                        setPuntosPregunta(puntosPregunta * nivel + 10);
+                        console.log(res);
+                        setPreguntas(res.data.pregunta);
+                        const respuestasObtenidas = [
+                            res.data.pregunta.respuesta1,
+                            res.data.pregunta.respuesta2,
+                            res.data.pregunta.respuesta3,
+                            res.data.pregunta.respuestaCorrecta
+                        ];
 
-                    setRespuestas(respuestasAleatorias);
-                    setShowLoading(false);
+                        const respuestasAleatorias = respuestasObtenidas.sort(() => Math.random() - 0.5);
+
+                        setRespuestas(respuestasAleatorias);
+
+                        setJugador({
+                            ...jugador,
+                            puntos: puntos,
+                            nivel: nivel
+                        });
+
+                        setShowLoading(false);
+                    } else {
+                        alert("No hay preguntas disponibles para el nivel: " + nivel);
+                        setPreguntas({});
+                        setRespuestas([]);
+                        window.location.href = "/";
+                    }
+
                 })
                 .catch(err => {
                     if (err.response) {
@@ -153,9 +157,57 @@ function Jugar() {
                     console.log(err);
                 });
         };
-        obtenerPregunta();
+        if (nivel < 6) {
+            obtenerPregunta();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nivel, puntos]);
 
+    // Al superar el nivel 5
+    useEffect(() => {
+        if (nivel > 5) {
+
+            if (window.confirm("¡Felicidades! ¡Has superado el nivel 5!, ¿Deseas continuar?")) {
+                setNivel(1);
+                setPuntosPregunta(0);
+            } else {
+                handleGuardar();
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [nivel]);
+
+    // Guardar datos del jugador
+    const handleGuardar = async () => {
+
+        const data = {
+            nombre: jugador.nombre,
+            apellido: jugador.apellido,
+            puntos: puntos,
+            nivel: nivel - 1
+        }
+        console.log(data);
+
+
+        console.log(jugador);
+        setPuntos(0);
+        setNivel(1);
+        setPreguntas([]);
+
+        await axios.post(`${config.HOST}/jugador/new`, data)
+            .then(res => {
+                console.log(res);
+                window.location.href = "/";
+            })
+            .catch(err => {
+                if (err.response) {
+                    alert(err.response.data.message);
+                } else {
+                    alert("Error, contacte con el administrador");
+                }
+                console.log(err);
+            });
+    };
 
     return (
         <Fragment>
@@ -199,33 +251,33 @@ function Jugar() {
                     {showLoading ? <div className="col-sm-12 text-center"><Spinner animation="border" variant="primary" /></div> :
                         <form onSubmit={enviarRespuesta}>
                             <div className="row">
-                                <div className="col-md-4">
+                                <div className="col-md-6">
 
-                                    <div className="col-md-4 d-flex align-items-center">
+                                    <div className="col-md-12 d-flex align-items-center">
                                         <h5>{preguntas.pregunta} </h5>
                                     </div>
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-md-4">
                                     <div className="form-check">
-                                        <input className="form-check-input" type="radio" name="exampleRadios" id="respuesta1" value={respuestas[0]} onChange={onRadioChange} />
-                                        <label className="form-check-label" htmlFor="repuesta1">
+                                        <input className="form-check-input" type="radio" name="exampleRadios" id="respuesta1" value={respuestas[0]} onChange={onRadioChange} checked={selectedOption === "respuesta1"} />
+                                        <label className="form-check-label" htmlFor="respuesta1">
                                             {respuestas[0]}
                                         </label>
                                     </div>
                                     <div className="form-check">
-                                        <input className="form-check-input" type="radio" name="exampleRadios" id="respuesta2" value={respuestas[1]} onChange={onRadioChange} />
+                                        <input className="form-check-input" type="radio" name="exampleRadios" id="respuesta2" value={respuestas[1]} onChange={onRadioChange} checked={selectedOption === "respuesta2"} />
                                         <label className="form-check-label" htmlFor="respuesta2">
                                             {respuestas[1]}
                                         </label>
                                     </div>
                                     <div className="form-check">
-                                        <input className="form-check-input" type="radio" name="exampleRadios" id="respuesta4" value={respuestas[2]} onChange={onRadioChange} />
+                                        <input className="form-check-input" type="radio" name="exampleRadios" id="respuesta3" value={respuestas[2]} onChange={onRadioChange} checked={selectedOption === "respuesta3"} />
                                         <label className="form-check-label" htmlFor="respuesta3">
                                             {respuestas[2]}
                                         </label>
                                     </div>
                                     <div className="form-check">
-                                        <input className="form-check-input" type="radio" name="exampleRadios" id="respuesta4" value={respuestas[3]} onChange={onRadioChange} />
+                                        <input className="form-check-input" type="radio" name="exampleRadios" id="respuesta4" value={respuestas[3]} onChange={onRadioChange} checked={selectedOption === "respuesta4"} />
                                         <label className="form-check-label" htmlFor="respuesta4">
                                             {respuestas[3]}
                                         </label>

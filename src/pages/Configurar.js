@@ -106,6 +106,7 @@ function Configuracion() {
                         mostrar: false,
                         modo: ""
                     });
+                    alert(res.data.message);
                     window.location.reload();
                 })
                 .catch(err => {
@@ -114,6 +115,11 @@ function Configuracion() {
                     } else {
                         alert("Error, contacte con el administrador");
                     }
+                    setParamModal({
+                        titulo: "",
+                        mostrar: false,
+                        modo: ""
+                    });
                 });
         } catch (error) {
             console.log(error)
