@@ -5,6 +5,8 @@ import FormNuevaCategoria from "./components/FormNuevaCategoria";
 import FormNuevaPregunta from "./components/FormNuevaPregunta";
 import { Modal } from "react-bootstrap";
 import { useState } from "react";
+import config from "../config/config.json";
+import axios from "axios";
 
 
 
@@ -16,12 +18,12 @@ function Configuracion() {
         onGuardar: null,
         onCancelar: null
 
-
     });
 
     const [categoria, setCategoria] = useState({
+        id: "",
         nombre: "",
-        descripcion: ""
+        nivel: ""
     });
 
     // Modal categoria nueva
@@ -39,7 +41,6 @@ function Configuracion() {
         });
     };
 
-
     // Modal pregunta nueva
     const nuevaPregunta = () => {
         setParamModal({
@@ -55,6 +56,37 @@ function Configuracion() {
         });
     };
 
+    // Guardar categoria
+    const handleCategoria = async (categoria) => {
+        console.log(categoria);
+        try {
+            await axios.post(`${config.HOST}/categoria/new`, categoria)
+            .then(res => {
+                console.log(res);
+                setParamModal({
+                    titulo: "",
+                    mostrar: false,
+                    modo: ""
+                });
+                window.location.reload();
+
+            })
+            .catch(err => {
+                if (err.response) {
+
+                    alert(err.response.data.message);
+                } else {
+                    alert("Error, contacte con el administrador");
+                }
+                console.log(err);
+            }
+            );
+
+        } catch (error) {
+            console.log(error)
+            }
+    };
+
     const onGuardar = () => {
         alert("Guardar");
     };
@@ -65,6 +97,17 @@ function Configuracion() {
         setParamModal(paramNuevos);
     };
 
+    // Al escoger una categoria de la lista
+    const handleCategoriaSeleccionada = (id,nombre,nivel) => {
+        console.log(id,nombre,nivel);
+        setCategoria({
+            id: id,
+            nombre: nombre,
+            nivel: nivel
+        });
+        
+    };
+    
 
     return (
         <Fragment>
@@ -100,11 +143,11 @@ function Configuracion() {
                     <div className="container shadow p-3 bg-body rounded">
                         <div className="row align-items-center">
                         <div className="col-md-3">
-                            <ListaCategoria />
+                            <ListaCategoria handleCategoria={handleCategoriaSeleccionada} />
                             
                         </div>
                         <div className="col-md-9">
-                            Nivel:
+                            Nivel: {categoria.nivel}
                         </div>
                         </div>
                     </div>
@@ -132,7 +175,7 @@ function Configuracion() {
                 </Modal.Header>
                 <Modal.Body>
                     {paramModal.modo === "categoria" ? <FormNuevaCategoria
-                        guardar={onGuardar}
+                        handleCategoria={handleCategoria}
                         cancelar={onCancelarModal}
                     /> : <FormNuevaPregunta
                         guardar={onGuardar}

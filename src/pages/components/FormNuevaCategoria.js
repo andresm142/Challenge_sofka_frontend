@@ -1,13 +1,40 @@
-const { Fragment } = require("react");
+import config from '../../config/config.json';
+
+const { Fragment, useState } = require("react");
 
 function FormNuevaCategoria(props) {
+
+    const [categoria, setCategoria] = useState({
+        nombre: "",
+        nivel: 1
+    });
+
+    const onInputChange = (e) => {
+        const [name, value] = [e.target.name, e.target.value];
+        setCategoria({
+            ...categoria,
+            [name]: value
+        });
+        
+    }
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        props.handleCategoria(categoria);
+        setCategoria({
+            nombre: "",
+            nivel: 1
+        });
+    }
+
+
     return (
         <Fragment>
-            <form className="form-group">
+            <form onSubmit={onSubmit} className="form-group">
                 <label>Nombre</label>
-                <input type="text" className="form-control" />
+                <input type="text" className="form-control" name="nombre" onChange={onInputChange} required/>
                 <label>Nivel</label>
-                <select className="form-control">
+                <select className="form-control" name="nivel" onChange={onInputChange}>
                     <option>1</option>
                     <option>2</option>
                     <option>3</option>
@@ -16,7 +43,7 @@ function FormNuevaCategoria(props) {
                 </select>
 
 
-                <button type="submit" className="btn btn-primary btn-block mt-4" onClick={props.guardar}>
+                <button type="submit" className="btn btn-primary btn-block mt-4">
                     Guardar
                 </button>
                 <button type="button" className="btn btn-secondary btn-block mt-4 ms-2" onClick={props.cancelar}>
