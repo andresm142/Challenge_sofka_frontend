@@ -11,7 +11,7 @@ function Resultados() {
             await axios.get(`${config.HOST}/jugador`)
                 .then(res => {
                     setJugador(res.data.jugadores);
-                    console.log(res.data.jugadores);
+                    // console.log(res.data.jugadores);
                 })
                 .catch(err => {
                     if (err.response) {

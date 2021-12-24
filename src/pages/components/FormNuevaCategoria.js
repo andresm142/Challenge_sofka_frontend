@@ -1,4 +1,3 @@
-import config from '../../config/config.json';
 
 const { Fragment, useState } = require("react");
 

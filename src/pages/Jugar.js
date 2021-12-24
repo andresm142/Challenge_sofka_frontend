@@ -57,7 +57,7 @@ function Jugar() {
     // Al cambiar la seleccion del radio button
     const onRadioChange = (e) => {
         setSelectedOption(e.target.id);
-        console.log(e.target.value);
+        // console.log(e.target.value);
         setRadioButton(e.target.value);
 
     };
@@ -113,7 +113,7 @@ function Jugar() {
         const obtenerPregunta = async () => {
             await axios.get(`${config.HOST}/pregunta/nivel/${nivel}`)
                 .then(res => {
-                    console.log(res.data.pregunta);
+                    // console.log(res.data.pregunta);
                     if (res.data.pregunta) {
 
                         setPuntosPregunta(puntosPregunta * nivel + 10);
