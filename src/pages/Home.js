@@ -3,6 +3,7 @@ import { Fragment } from "react";
 
 
 function Home () {
+  
     const iniciarJuego = () => {
         console.log('Iniciando juego');
         window.location.href = '/jugar';
@@ -10,6 +11,10 @@ function Home () {
     
       const configurarJuego = () => {
         window.location.href = '/configurar';
+      }
+
+      const resultados = () => {
+        window.location.href = '/resultados';
       }
 
     return (
@@ -28,6 +33,13 @@ function Home () {
           <div className="col-md-4">
             <button type="button" className="btn btn-primary btn-lg btn-block mt-4" onClick={configurarJuego}>
               Configurar juego
+            </button>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-4">
+            <button type="button" className="btn btn-primary btn-lg btn-block mt-4" onClick={resultados}>
+              Resultados historicos
             </button>
           </div>
         </div>

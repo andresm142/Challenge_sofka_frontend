@@ -5,6 +5,7 @@ import Jugar from './pages/Jugar';
 import Configurar from './pages/Configurar';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Fragment } from 'react';
+import Resultados from './pages/Resultados';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/jugar" element={<Jugar />} />
           <Route path="/configurar" element={<Configurar />} />
+          <Route path= "/resultados" element={<Resultados />} />
         </Routes>
       </Router>
     </Fragment>
