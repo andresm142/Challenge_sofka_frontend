@@ -1,13 +1,22 @@
 const { Fragment } = require("react");
 
-function ListaPreguntas() {
+function ListaPreguntas(props) {
+     // Mostrar las respuestas en forma aleatoria
+    const respuestas = [
+        props.preguntas.respuesta1,
+        props.preguntas.respuesta2,
+        props.preguntas.respuesta3,
+        props.preguntas.respuestaCorrecta
+    ];
+    const respuestasAleatorias = respuestas.sort(() => Math.random() - 0.5);
+    
     return (
         <Fragment>
 
             <div className="container shadow p-3 bg-body rounded m-2">
                 <div className="row">
                     <div className="col-md-12">
-                        <h5>Pregunta 1</h5>
+                        <h5>{props.preguntas.pregunta}</h5>
                     </div>
                 </div>
                 <div className="row">
@@ -17,7 +26,7 @@ function ListaPreguntas() {
 
                     </div>
                     <div className="col-8 descripcion">
-                        Respuesta 1
+                        {respuestasAleatorias[0]}
                     </div>
                 </div>
                 <div className="row">
@@ -27,7 +36,7 @@ function ListaPreguntas() {
 
                     </div>
                     <div className="col-8 descripcion">
-                        Respuesta 2
+                        {respuestasAleatorias[1]}
                     </div>
                 </div>
                 <div className="row">
@@ -37,7 +46,7 @@ function ListaPreguntas() {
 
                     </div>
                     <div className="col-8 descripcion">
-                        Respuesta 3
+                        {respuestasAleatorias[2]}
                     </div>
                 </div>
                 <div className="row">
@@ -47,7 +56,7 @@ function ListaPreguntas() {
 
                     </div>
                     <div className="col-8 descripcion">
-                        Respuesta 4
+                        {respuestasAleatorias[3]}
                     </div>
                 </div>
             </div>

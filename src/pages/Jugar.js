@@ -1,6 +1,17 @@
 import { Fragment } from "react";
+import axios from "axios";
 
 function Jugar() {
+
+    // Salir del juego
+    const salir = () => {
+        if (window.confirm("¿Estás seguro de que quieres salir del juego?")) {
+            window.location.href = "/";
+        }
+
+
+    };
+
     return (
         <Fragment>
             <div className="container mt-4 shadow p-3 mb-5 bg-body rounded">
@@ -23,9 +34,9 @@ function Jugar() {
             <div className="row">
                 <div className="row text-center">
                     <div className="col-md-12">
-                    <button type="button" className="btn btn-danger btn-lg btn-block mt-4">
-                        Salir del juego
-                    </button>
+                        <button type="button" className="btn btn-danger btn-lg btn-block mt-4" onClick={salir}>
+                            Salir del juego
+                        </button>
                     </div>
                 </div>
             </div>

@@ -4,9 +4,10 @@ import ListaPreguntas from "./components/ListaPreguntas";
 import FormNuevaCategoria from "./components/FormNuevaCategoria";
 import FormNuevaPregunta from "./components/FormNuevaPregunta";
 import { Modal } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import config from "../config/config.json";
 import axios from "axios";
+
 
 
 
@@ -20,11 +21,13 @@ function Configuracion() {
 
     });
 
-    const [categoria, setCategoria] = useState({
+    const [categoriaSelect, setCategoriaSelect] = useState({
         id: "",
         nombre: "",
         nivel: ""
     });
+
+    const [preguntas, setPreguntas] = useState([]);
 
     // Modal categoria nueva
     const nuevaCategoria = () => {
@@ -56,39 +59,65 @@ function Configuracion() {
         });
     };
 
+    // Pagina de inicio
+    const inicio = () => {
+        window.location.href = "/";
+    };
+
     // Guardar categoria
     const handleCategoria = async (categoria) => {
         console.log(categoria);
         try {
             await axios.post(`${config.HOST}/categoria/new`, categoria)
-            .then(res => {
-                console.log(res);
-                setParamModal({
-                    titulo: "",
-                    mostrar: false,
-                    modo: ""
-                });
-                window.location.reload();
+                .then(res => {
+                    console.log(res);
+                    setParamModal({
+                        titulo: "",
+                        mostrar: false,
+                        modo: ""
+                    });
+                    window.location.reload();
 
-            })
-            .catch(err => {
-                if (err.response) {
+                })
+                .catch(err => {
+                    if (err.response) {
 
-                    alert(err.response.data.message);
-                } else {
-                    alert("Error, contacte con el administrador");
+                        alert(err.response.data.message);
+                    } else {
+                        alert("Error, contacte con el administrador");
+                    }
+                    console.log(err);
                 }
-                console.log(err);
-            }
-            );
+                );
 
         } catch (error) {
             console.log(error)
-            }
+        }
     };
 
-    const onGuardar = () => {
-        alert("Guardar");
+    // Guardar pregunta
+    const handlePregunta = async (pregunta) => {
+        console.log(pregunta);
+        try {
+            await axios.post(`${config.HOST}/pregunta/new`, pregunta)
+                .then(res => {
+                    setParamModal({
+                        titulo: "",
+                        mostrar: false,
+                        modo: ""
+                    });
+                    window.location.reload();
+                })
+                .catch(err => {
+                    if (err.response) {
+                        alert(err.response.data.message);
+                    } else {
+                        alert("Error, contacte con el administrador");
+                    }
+                });
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     const onCancelarModal = () => {
@@ -98,16 +127,47 @@ function Configuracion() {
     };
 
     // Al escoger una categoria de la lista
-    const handleCategoriaSeleccionada = (id,nombre,nivel) => {
-        console.log(id,nombre,nivel);
-        setCategoria({
+    const handleCategoriaSeleccionada = (id, nombre, nivel) => {
+
+        setCategoriaSelect({
             id: id,
             nombre: nombre,
             nivel: nivel
         });
-        
+
     };
-    
+
+    // Obtener lista de preguntas de la categoria seleccionada
+    useEffect(() => {
+
+        async function getListaPreguntas() {
+            if (categoriaSelect.id !== "") {
+
+                await axios.get(`${config.HOST}/pregunta/categoria/${categoriaSelect.id}`)
+                    .then(res => {
+                        console.log(res);
+                        setPreguntas(res.data.preguntas);
+                    })
+                    .catch(err => {
+                        if (err.response) {
+                            alert(err.response.data.message);
+                        } else {
+                            alert("Error, contacte con el administrador");
+                        }
+                        console.log(err);
+                    });
+            }
+        }
+        getListaPreguntas();
+    }, [categoriaSelect]);
+
+    const listaPreguntas = preguntas.map((pregunta) => (
+        <ListaPreguntas
+            key={pregunta._id}
+            preguntas={pregunta}
+        />
+    ));
+
 
     return (
         <Fragment>
@@ -131,6 +191,13 @@ function Configuracion() {
                         </button>
                     </div>
                 </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <button type="button" className="btn btn-secondary btn-lg btn-block mt-4" onClick={inicio}>
+                            Pagina de inicio
+                        </button>
+                    </div>
+                </div>
                 <div className="row mt-2">
                     <div className="col-md-12">
                         <div className="container shadow p-3 bg-body rounded">
@@ -142,13 +209,14 @@ function Configuracion() {
                 <div className="row mt-2">
                     <div className="container shadow p-3 bg-body rounded">
                         <div className="row align-items-center">
-                        <div className="col-md-3">
-                            <ListaCategoria handleCategoria={handleCategoriaSeleccionada} />
-                            
-                        </div>
-                        <div className="col-md-9">
-                            Nivel: {categoria.nivel}
-                        </div>
+                            <div className="col-md-3">
+                                <ListaCategoria 
+                                    handleCategoria={handleCategoriaSeleccionada} />
+
+                            </div>
+                            <div className="col-md-9">
+                                Nivel: {categoriaSelect.nivel}
+                            </div>
                         </div>
                     </div>
 
@@ -156,12 +224,8 @@ function Configuracion() {
                 <div className="row mt-2">
                     <div className="container shadow p-3 bg-body rounded">
                         <div className="col-md-12">
+                            {listaPreguntas}
 
-                            <ListaPreguntas />
-                            <ListaPreguntas />
-                            <ListaPreguntas />
-                            <ListaPreguntas />
-                            <ListaPreguntas />
 
                         </div>
                     </div>
@@ -178,7 +242,8 @@ function Configuracion() {
                         handleCategoria={handleCategoria}
                         cancelar={onCancelarModal}
                     /> : <FormNuevaPregunta
-                        guardar={onGuardar}
+                        
+                        handlePregunta={handlePregunta}
                         cancelar={onCancelarModal}
                     />}
                 </Modal.Body>

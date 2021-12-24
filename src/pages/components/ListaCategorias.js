@@ -7,7 +7,7 @@ import config from '../../config/config.json';
 export default function ListaCategoria(props) {
 
     const [listaCategorias, setListaCategorias] = useState([]);
-
+    
     useEffect(() => {
         async function getListaCategorias() {
 
